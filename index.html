@@ -590,6 +590,150 @@
             font-size: 1.2rem;
         }
         
+        /* Investment Details */
+        .investment-detail-card {
+            background: rgba(43, 49, 57, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .detail-section {
+            margin-bottom: 20px;
+        }
+        
+        .detail-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .detail-section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--accent-neutral);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .detail-item-large {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+        
+        .detail-value-large {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 8px 0;
+        }
+        
+        .detail-label-large {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+        }
+        
+        .timeline-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent-neutral);
+        }
+        
+        .timeline-dot.completed {
+            background: var(--accent-buy);
+        }
+        
+        .timeline-content {
+            flex: 1;
+        }
+        
+        .timeline-date {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        .timeline-description {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        /* Countdown Timer */
+        .countdown {
+            background: rgba(43, 49, 57, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .countdown-time {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--accent-neutral);
+            margin: 8px 0;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .countdown-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            height: 8px;
+            margin: 10px 0;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: var(--accent-neutral);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-bar.completed {
+            background: var(--accent-buy);
+        }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+        
         /* Responsive Design - Tablet */
         @media (min-width: 768px) {
             .container {
@@ -654,6 +798,14 @@
             
             .performance-metrics {
                 grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .investment-details {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .detail-grid {
+                grid-template-columns: repeat(3, 1fr);
             }
         }
         
@@ -777,7 +929,7 @@
                         <div class="type-return">+2.2% mensual</div>
                     </div>
                     <div style="font-size: 0.85rem; color: var(--text-secondary);">
-                        Inversión en empresas tecnológicas líderes
+                        Inversión en empresas tecnológicas líderes (Apple, Google, Amazon)
                     </div>
                 </div>
                 <div class="type-card">
@@ -786,7 +938,7 @@
                         <div class="type-return">+3.5% mensual</div>
                     </div>
                     <div style="font-size: 0.85rem; color: var(--text-secondary);">
-                        Mercado de divisas Euro/Dólar
+                        Mercado de divisas Euro/Dólar con alta liquidez
                     </div>
                 </div>
             </div>
@@ -896,6 +1048,19 @@
                                 </tbody>
                             </table>
                         </div>
+                    </div>
+                </div>
+                
+                <!-- Detalles de Inversión Activa -->
+                <div class="card" id="investment-details-card" style="display: none;">
+                    <div class="card-header">
+                        <div class="card-title"><i class="fas fa-info-circle"></i> Detalles de Inversión</div>
+                        <button class="btn btn-sell" onclick="hideInvestmentDetails()" style="padding: 8px 12px; font-size: 0.8rem;">
+                            <i class="fas fa-times"></i> Cerrar
+                        </button>
+                    </div>
+                    <div id="investment-details-content">
+                        <!-- Se carga dinámicamente -->
                     </div>
                 </div>
                 
@@ -1045,54 +1210,37 @@
             { 
                 id: 6, 
                 asset: 'Tech Stocks', 
-                amount: 5000, 
+                amount: 2500, 
                 startDate: '28/07/2025', 
-                endDate: '28/10/2025', 
+                startTime: '14:23:45',
+                endDate: '28/10/2025',
+                endTime: '14:23:45',
                 duration: 3,
                 currentMonth: 3,
-                monthlyProfit: 110,
-                totalProfit: 330,
+                monthlyProfit: 55,
+                totalProfit: 165,
                 status: 'En Curso',
-                progress: 100
+                progress: 100,
+                type: 'stocks',
+                returnRate: 2.2
             },
             { 
                 id: 7, 
                 asset: 'Crypto Portfolio', 
                 amount: 3500, 
-                startDate: '15/09/2025', 
-                endDate: '15/12/2025', 
+                startDate: '15/09/2025',
+                startTime: '10:15:30',
+                endDate: '15/12/2025',
+                endTime: '10:15:30',
                 duration: 3,
                 currentMonth: 2,
                 monthlyProfit: 77,
                 totalProfit: 154,
                 status: 'En Curso',
-                progress: 66
+                progress: 66,
+                type: 'crypto',
+                returnRate: 4.8
             }
-        ];
-
-        // Inversiones pendientes
-        const pendingInvestments = [
-            { 
-                id: 8, 
-                asset: 'Real Estate Fund', 
-                amount: 6000, 
-                startDate: '01/11/2025', 
-                endDate: '01/05/2026', 
-                duration: 6,
-                currentMonth: 0,
-                monthlyProfit: 132,
-                totalProfit: 0,
-                status: 'Pendiente',
-                progress: 0
-            }
-        ];
-
-        // Historial de retiros
-        const withdrawalHistory = [
-            { id: 1, date: '20/10/2025', bank: 'Scotiabank', amount: 2000, account: 'Cuenta Ahorros ****7890', status: 'Completado', type: 'withdrawal' },
-            { id: 2, date: '15/09/2025', bank: 'BCP', amount: 1500, account: 'Cuenta Sueldo ****1234', status: 'Completado', type: 'withdrawal' },
-            { id: 3, date: '05/08/2025', bank: 'Scotiabank', amount: 3000, account: 'Cuenta Ahorros ****7890', status: 'Completado', type: 'withdrawal' },
-            { id: 4, date: '20/07/2025', bank: 'BCP', amount: 1200, account: 'Cuenta Sueldo ****1234', status: 'Completado', type: 'withdrawal' }
         ];
 
         // ========== FUNCIONES DE CÁLCULO ==========
@@ -1118,14 +1266,14 @@
             document.getElementById('summary-monthly').textContent = `S/. ${monthlyProfit.toFixed(2)}`;
             document.getElementById('summary-total').textContent = `S/. ${finalAmount.toLocaleString('es-PE')}`;
             
-            return { amount, monthlyProfit, totalProfit, finalAmount, investmentType };
+            return { amount, monthlyProfit, totalProfit, finalAmount, investmentType, monthlyRate };
         }
 
         // ========== FUNCIONES DE CARGA DE DATOS ==========
         function loadActiveInvestments() {
             const container = document.getElementById('active-investments');
             container.innerHTML = activeInvestments.map(inv => `
-                <div class="active-investment">
+                <div class="active-investment" onclick="showInvestmentDetails(${inv.id})" style="cursor: pointer;">
                     <div class="investment-header">
                         <div class="investment-name">${inv.asset}</div>
                         <div class="investment-amount">S/. ${inv.amount.toLocaleString('es-PE')}</div>
@@ -1148,124 +1296,288 @@
                             <div class="detail-value positive">S/. ${inv.totalProfit.toFixed(2)}</div>
                         </div>
                     </div>
-                </div>
-            `).join('');
-        }
-
-        function loadPendingInvestments() {
-            const container = document.getElementById('pending-investments');
-            container.innerHTML = pendingInvestments.map(inv => `
-                <div class="active-investment">
-                    <div class="investment-header">
-                        <div class="investment-name">${inv.asset}</div>
-                        <div class="investment-amount">S/. ${inv.amount.toLocaleString('es-PE')}</div>
+                    <div class="progress-container">
+                        <div class="progress-bar ${inv.progress === 100 ? 'completed' : ''}" style="width: ${inv.progress}%"></div>
                     </div>
-                    <div style="margin-bottom: 10px;">
-                        <span class="status-badge pending">Programado para ${inv.startDate}</span>
-                    </div>
-                    <div class="investment-details">
-                        <div class="detail-item">
-                            <div class="detail-label">Inicio</div>
-                            <div class="detail-value">${inv.startDate}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Duración</div>
-                            <div class="detail-value">${inv.duration} meses</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Ganancia Mensual</div>
-                            <div class="detail-value positive">S/. ${inv.monthlyProfit.toFixed(2)}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Estado</div>
-                            <div class="detail-value">Pendiente</div>
-                        </div>
+                    <div class="progress-info">
+                        <span>Iniciado: ${inv.startDate} ${inv.startTime}</span>
+                        <span>${inv.progress}% completado</span>
                     </div>
                 </div>
             `).join('');
         }
 
-        function loadInvestmentsHistory() {
-            const container = document.getElementById('investments-body');
-            container.innerHTML = investmentHistory.map(inv => `
-                <tr>
-                    <td>${inv.date}</td>
-                    <td>${inv.asset}</td>
-                    <td>S/. ${inv.amount.toLocaleString('es-PE')}</td>
-                    <td class="positive">S/. ${inv.profit.toLocaleString('es-PE')}</td>
-                    <td><span class="status-badge completed">${inv.status}</span></td>
-                </tr>
-            `).join('');
-        }
+        // ========== FUNCIONES DE DETALLES DE INVERSIÓN ==========
+        function showInvestmentDetails(investmentId) {
+            const investment = activeInvestments.find(inv => inv.id === investmentId);
+            if (!investment) return;
 
-        function loadWithdrawalsHistory() {
-            const container = document.getElementById('withdrawals-body');
-            container.innerHTML = withdrawalHistory.map(wd => `
-                <tr>
-                    <td>${wd.date}</td>
-                    <td>${wd.bank}</td>
-                    <td class="positive">S/. ${wd.amount.toLocaleString('es-PE')}</td>
-                    <td>${wd.account}</td>
-                    <td><span class="status-badge withdrawn">${wd.status}</span></td>
-                </tr>
-            `).join('');
-        }
-
-        function loadAllHistory() {
-            const container = document.getElementById('all-history-body');
-            const allHistory = [
-                ...activeInvestments.map(inv => ({ ...inv, type: 'active', date: inv.startDate })),
-                ...pendingInvestments.map(inv => ({ ...inv, type: 'pending', date: inv.startDate })),
-                ...investmentHistory,
-                ...withdrawalHistory
-            ].sort((a, b) => new Date(b.date.split('/').reverse().join('-')) - new Date(a.date.split('/').reverse().join('-')));
+            // Corregir el problema del tiempo restante
+            const now = new Date();
+            // Convertir fecha de inicio y fin a objetos Date válidos
+            const [startDay, startMonth, startYear] = investment.startDate.split('/').map(Number);
+            const [endDay, endMonth, endYear] = investment.endDate.split('/').map(Number);
+            const [startHour, startMinute, startSecond] = investment.startTime.split(':').map(Number);
             
-            container.innerHTML = allHistory.map(item => {
-                if (item.type === 'active') {
-                    return `
-                        <tr>
-                            <td>${item.date}</td>
-                            <td><span class="status-badge in-progress">EN CURSO</span></td>
-                            <td>${item.asset} - Mes ${item.currentMonth}/${item.duration}</td>
-                            <td class="positive">S/. ${item.amount.toLocaleString('es-PE')}</td>
-                            <td><span class="status-badge in-progress">${item.status}</span></td>
-                        </tr>
-                    `;
-                } else if (item.type === 'pending') {
-                    return `
-                        <tr>
-                            <td>${item.date}</td>
-                            <td><span class="status-badge pending">PENDIENTE</span></td>
-                            <td>${item.asset} - Inicia ${item.startDate}</td>
-                            <td class="positive">S/. ${item.amount.toLocaleString('es-PE')}</td>
-                            <td><span class="status-badge pending">${item.status}</span></td>
-                        </tr>
-                    `;
-                } else if (item.type === 'investment') {
-                    return `
-                        <tr>
-                            <td>${item.date}</td>
-                            <td><span class="status-badge completed">COMPLETADA</span></td>
-                            <td>${item.asset} - Ganancia: S/. ${item.profit}</td>
-                            <td class="positive">S/. ${item.amount.toLocaleString('es-PE')}</td>
-                            <td><span class="status-badge completed">${item.status}</span></td>
-                        </tr>
-                    `;
-                } else {
-                    return `
-                        <tr>
-                            <td>${item.date}</td>
-                            <td><span class="status-badge withdrawn">RETIRO</span></td>
-                            <td>${item.bank} - ${item.account}</td>
-                            <td class="positive">S/. ${item.amount.toLocaleString('es-PE')}</td>
-                            <td><span class="status-badge withdrawn">${item.status}</span></td>
-                        </tr>
-                    `;
-                }
-            }).join('');
+            const startDate = new Date(startYear, startMonth - 1, startDay, startHour, startMinute, startSecond);
+            const endDate = new Date(endYear, endMonth - 1, endDay, startHour, startMinute, startSecond);
+            
+            const timeRemaining = endDate - now;
+            
+            // Calcular días, horas y minutos restantes
+            let daysRemaining = 0;
+            let hoursRemaining = 0;
+            let minutesRemaining = 0;
+            
+            if (timeRemaining > 0) {
+                daysRemaining = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+                hoursRemaining = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                minutesRemaining = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+            }
+
+            const detailsContent = `
+                <div class="detail-section">
+                    <div class="detail-section-title">
+                        <i class="fas fa-chart-line"></i>
+                        Resumen de la Inversión
+                    </div>
+                    <div class="detail-grid">
+                        <div class="detail-item-large">
+                            <div class="detail-label-large">Monto Invertido</div>
+                            <div class="detail-value-large">S/. ${investment.amount.toLocaleString('es-PE')}</div>
+                        </div>
+                        <div class="detail-item-large">
+                            <div class="detail-label-large">Ganancia Acumulada</div>
+                            <div class="detail-value-large positive">S/. ${investment.totalProfit.toFixed(2)}</div>
+                        </div>
+                        <div class="detail-item-large">
+                            <div class="detail-label-large">Valor Actual</div>
+                            <div class="detail-value-large">S/. ${(investment.amount + investment.totalProfit).toLocaleString('es-PE')}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-section-title">
+                        <i class="fas fa-calendar-alt"></i>
+                        Cronograma
+                    </div>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-dot completed"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-date">${investment.startDate} ${investment.startTime}</div>
+                                <div class="timeline-description">Inversión iniciada</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot ${investment.currentMonth >= 1 ? 'completed' : ''}"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-date">${calculateMonthDate(investment.startDate, 1)}</div>
+                                <div class="timeline-description">Mes 1 - Ganancia: S/. ${investment.monthlyProfit.toFixed(2)}</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot ${investment.currentMonth >= 2 ? 'completed' : ''}"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-date">${calculateMonthDate(investment.startDate, 2)}</div>
+                                <div class="timeline-description">Mes 2 - Ganancia: S/. ${investment.monthlyProfit.toFixed(2)}</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot ${investment.currentMonth >= 3 ? 'completed' : ''}"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-date">${investment.endDate} ${investment.endTime}</div>
+                                <div class="timeline-description">Finalización - Retiro disponible</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-section-title">
+                        <i class="fas fa-clock"></i>
+                        Tiempo Restante
+                    </div>
+                    <div class="countdown">
+                        <div class="countdown-time">
+                            ${daysRemaining}d ${hoursRemaining}h ${minutesRemaining}m
+                        </div>
+                        <div class="countdown-label">Hasta el ${investment.endDate} a las ${investment.endTime}</div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-section-title">
+                        <i class="fas fa-percentage"></i>
+                        Detalles de Rentabilidad
+                    </div>
+                    <div class="detail-grid">
+                        <div class="detail-item-large">
+                            <div class="detail-label-large">Tasa Mensual</div>
+                            <div class="detail-value-large positive">${investment.returnRate}%</div>
+                        </div>
+                        <div class="detail-item-large">
+                            <div class="detail-label-large">Ganancia Mensual</div>
+                            <div class="detail-value-large positive">S/. ${investment.monthlyProfit.toFixed(2)}</div>
+                        </div>
+                        <div class="detail-item-large">
+                            <div class="detail-label-large">Rentabilidad Total</div>
+                            <div class="detail-value-large positive">${((investment.totalProfit / investment.amount) * 100).toFixed(1)}%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-section-title">
+                        <i class="fas fa-info-circle"></i>
+                        Información Adicional
+                    </div>
+                    <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5;">
+                        <p><strong>Tipo:</strong> ${getInvestmentTypeName(investment.type)}</p>
+                        <p><strong>Duración:</strong> ${investment.duration} meses</p>
+                        <p><strong>Progreso actual:</strong> Mes ${investment.currentMonth} de ${investment.duration}</p>
+                        <p><strong>Estado:</strong> <span class="status-badge in-progress">${investment.status}</span></p>
+                        <p><strong>Disponible para retiro:</strong> ${investment.endDate} a las ${investment.endTime}</p>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('investment-details-content').innerHTML = detailsContent;
+            document.getElementById('investment-details-card').style.display = 'block';
+            
+            // Scroll to details
+            document.getElementById('investment-details-card').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // ========== FUNCIONES DE INTERFAZ ==========
+        function hideInvestmentDetails() {
+            document.getElementById('investment-details-card').style.display = 'none';
+        }
+
+        function calculateMonthDate(startDate, monthsToAdd) {
+            const [day, month, year] = startDate.split('/').map(Number);
+            const date = new Date(year, month - 1, day);
+            date.setMonth(date.getMonth() + monthsToAdd);
+            return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+        }
+
+        function getInvestmentTypeName(type) {
+            const types = {
+                'stocks': 'Acciones Tech',
+                'crypto': 'Criptomonedas',
+                'forex': 'Forex EUR/USD',
+                'realestate': 'Bienes Raíces'
+            };
+            return types[type] || 'Inversión General';
+        }
+
+        // ========== INICIALIZACIÓN ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar datos iniciales
+            loadActiveInvestments();
+            updateBalanceDisplay();
+            calculateInvestmentReturns();
+            updateTime();
+            
+            // Configurar eventos
+            setupEventListeners();
+            
+            // Notificación de bienvenida
+            setTimeout(() => {
+                showNotification('¡Bienvenido Yovanny! Haz clic en cualquier inversión para ver detalles completos');
+            }, 1000);
+        });
+
+        function setupEventListeners() {
+            // Tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                    document.getElementById(this.dataset.tab + '-content').classList.add('active');
+                });
+            });
+
+            // Bancos
+            document.querySelectorAll('.bank-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.bank-option').forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedBank = this.getAttribute('data-bank');
+                });
+            });
+
+            // Cálculo en tiempo real
+            document.getElementById('investmentAmount').addEventListener('input', calculateInvestmentReturns);
+            document.getElementById('investmentType').addEventListener('change', calculateInvestmentReturns);
+            document.getElementById('duration').addEventListener('change', calculateInvestmentReturns);
+
+            // Botón de inversión
+            document.getElementById('buyBtn').addEventListener('click', function() {
+                const calculation = calculateInvestmentReturns();
+                createNewInvestment(calculation);
+            });
+        }
+
+        function createNewInvestment(calculation) {
+            const amount = calculation.amount;
+            
+            if (amount > userBalance) {
+                showNotification('Saldo insuficiente', 'error');
+                return;
+            }
+            
+            if (amount < 1000) {
+                showNotification('Mínimo S/. 1,000', 'error');
+                return;
+            }
+
+            const now = new Date();
+            const endDate = new Date(now);
+            endDate.setMonth(endDate.getMonth() + parseInt(document.getElementById('duration').value));
+
+            const newInvestment = {
+                id: investmentIdCounter++,
+                asset: document.getElementById('investmentType').options[document.getElementById('investmentType').selectedIndex].text,
+                amount: amount,
+                startDate: formatDate(now),
+                startTime: formatTime(now),
+                endDate: formatDate(endDate),
+                endTime: formatTime(now), // Misma hora de inicio
+                duration: parseInt(document.getElementById('duration').value),
+                currentMonth: 1,
+                monthlyProfit: calculation.monthlyProfit,
+                totalProfit: calculation.monthlyProfit,
+                status: 'En Curso',
+                progress: 33,
+                type: document.getElementById('investmentType').value,
+                returnRate: (calculation.monthlyRate * 100).toFixed(1)
+            };
+
+            activeInvestments.push(newInvestment);
+            userBalance -= amount;
+            updateBalanceDisplay();
+
+            showNotification(`Inversión de S/. ${amount.toLocaleString('es-PE')} creada exitosamente`);
+            loadActiveInvestments();
+            
+            // Limpiar formulario
+            document.getElementById('investmentAmount').value = '';
+            calculateInvestmentReturns();
+
+            // Mostrar detalles automáticamente
+            setTimeout(() => showInvestmentDetails(newInvestment.id), 500);
+        }
+
+        function formatDate(date) {
+            return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+        }
+
+        function formatTime(date) {
+            return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+        }
+
         function updateBalanceDisplay() {
             document.getElementById('header-balance').textContent = `S/. ${userBalance.toLocaleString('es-PE', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
             document.getElementById('withdraw-balance').textContent = `S/. ${userBalance.toLocaleString('es-PE', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
@@ -1278,7 +1590,6 @@
             notification.className = `notification ${type}`;
             
             let icon = 'fas fa-info-circle';
-            if (type === 'withdraw') icon = 'fas fa-paper-plane';
             if (type === 'error') icon = 'fas fa-exclamation-triangle';
             
             notification.innerHTML = `<i class="${icon}"></i><span>${message}</span>`;
@@ -1291,187 +1602,6 @@
             const now = new Date();
             document.getElementById('current-time').textContent = now.toLocaleTimeString('es-PE');
         }
-
-        // ========== INICIALIZACIÓN ==========
-        function initCharts() {
-            // Gráfico de rendimiento
-            const performanceCtx = document.getElementById('performanceChart').getContext('2d');
-            new Chart(performanceCtx, {
-                type: 'line',
-                data: {
-                    labels: ['25/07', '01/08', '08/08', '15/08', '22/08', '29/08', '05/09', '12/09', '19/09', '26/09', '03/10', '10/10', '17/10', '24/10', '28/10'],
-                    datasets: [{
-                        label: 'Valor de la Inversión',
-                        data: [5000, 5050, 5100, 5110, 5150, 5200, 5220, 5250, 5270, 5290, 5300, 5310, 5320, 5325, 5330],
-                        borderColor: '#00c076',
-                        backgroundColor: 'rgba(0, 192, 118, 0.1)',
-                        borderWidth: 2,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } }
-                }
-            });
-
-            // Gráfico de portafolio
-            const portfolioCtx = document.getElementById('portfolioChart').getContext('2d');
-            new Chart(portfolioCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Tech Stocks', 'Crypto', 'Forex', 'Real Estate'],
-                    datasets: [{
-                        data: [45, 25, 20, 10],
-                        backgroundColor: ['#00c076', '#f0b90b', '#f84960', '#2a5ada'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom' } }
-                }
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Inicializar todo
-            initCharts();
-            loadActiveInvestments();
-            loadPendingInvestments();
-            loadInvestmentsHistory();
-            loadWithdrawalsHistory();
-            loadAllHistory();
-            updateBalanceDisplay();
-            calculateInvestmentReturns();
-            updateTime();
-            
-            // Actualizar hora cada segundo
-            setInterval(updateTime, 1000);
-            
-            // Configurar tabs
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                    this.classList.add('active');
-                    document.getElementById(this.dataset.tab + '-content').classList.add('active');
-                });
-            });
-            
-            // Configurar bancos
-            document.querySelectorAll('.bank-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    document.querySelectorAll('.bank-option').forEach(opt => opt.classList.remove('selected'));
-                    this.classList.add('selected');
-                    selectedBank = this.getAttribute('data-bank');
-                });
-            });
-            
-            // Cálculo en tiempo real
-            document.getElementById('investmentAmount').addEventListener('input', calculateInvestmentReturns);
-            document.getElementById('investmentType').addEventListener('change', calculateInvestmentReturns);
-            document.getElementById('duration').addEventListener('change', calculateInvestmentReturns);
-            
-            // Botón de inversión
-            document.getElementById('buyBtn').addEventListener('click', function() {
-                const calculation = calculateInvestmentReturns();
-                const amount = calculation.amount;
-                
-                if (amount > userBalance) {
-                    showNotification('Saldo insuficiente', 'error');
-                    return;
-                }
-                
-                if (amount < 1000) {
-                    showNotification('Mínimo S/. 1,000', 'error');
-                    return;
-                }
-                
-                // Crear nueva inversión
-                const newInvestment = {
-                    id: investmentIdCounter++,
-                    asset: document.getElementById('investmentType').options[document.getElementById('investmentType').selectedIndex].text,
-                    amount: amount,
-                    startDate: '28/10/2025',
-                    endDate: '28/01/2026',
-                    duration: 3,
-                    currentMonth: 1,
-                    monthlyProfit: calculation.monthlyProfit,
-                    totalProfit: calculation.monthlyProfit,
-                    status: 'En Curso',
-                    progress: 33
-                };
-                
-                activeInvestments.push(newInvestment);
-                userBalance -= amount;
-                updateBalanceDisplay();
-                
-                showNotification(`Inversión de S/. ${amount.toLocaleString('es-PE')} ejecutada`);
-                loadActiveInvestments();
-                loadAllHistory();
-                
-                document.getElementById('investmentAmount').value = '';
-                calculateInvestmentReturns();
-            });
-            
-            // Botón de retiro
-            document.getElementById('withdrawBtn').addEventListener('click', function() {
-                const amount = parseFloat(document.getElementById('withdrawAmount').value);
-                
-                if (!selectedBank) {
-                    showNotification('Selecciona un banco', 'error');
-                    return;
-                }
-                
-                if (!amount || amount <= 0) {
-                    showNotification('Ingresa un monto válido', 'error');
-                    return;
-                }
-                
-                if (amount > userBalance) {
-                    showNotification('Saldo insuficiente', 'error');
-                    return;
-                }
-                
-                if (amount < 100) {
-                    showNotification('Mínimo S/. 100', 'error');
-                    return;
-                }
-                
-                const bankName = selectedBank === 'scotiabank' ? 'Scotiabank' : 'BCP';
-                const account = selectedBank === 'scotiabank' ? 'Cuenta Ahorros ****7890' : 'Cuenta Sueldo ****1234';
-                
-                const newWithdrawal = {
-                    id: withdrawalIdCounter++,
-                    date: '28/10/2025',
-                    bank: bankName,
-                    amount: amount,
-                    account: account,
-                    status: 'Pendiente',
-                    type: 'withdrawal'
-                };
-                
-                withdrawalHistory.unshift(newWithdrawal);
-                userBalance -= amount;
-                updateBalanceDisplay();
-                
-                showNotification(`Retiro de S/. ${amount.toLocaleString('es-PE')} solicitado`, 'withdraw');
-                loadWithdrawalsHistory();
-                loadAllHistory();
-                
-                document.getElementById('withdrawAmount').value = '';
-                document.querySelectorAll('.bank-option').forEach(opt => opt.classList.remove('selected'));
-                selectedBank = null;
-            });
-            
-            // Notificación de bienvenida
-            setTimeout(() => {
-                showNotification('¡Bienvenido Yovanny! Plataforma actualizada al 28/10/2025');
-            }, 1000);
-        });
     </script>
 </body>
 </html>
