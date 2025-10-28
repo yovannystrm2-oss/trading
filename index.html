@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeY - Plataforma de Trading | 28 Oct 2025</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #131722;
+            --secondary: #1e222d;
+            --accent-buy: #00c076;
+            --accent-sell: #f84960;
+            --accent-neutral: #f0b90b;
+            --accent-withdraw: #2a5ada;
+            --accent-pending: #ff6b35;
+            --accent-premium: #8a2be2;
+            --scotiabank: #e31837;
+            --bcp: #012169;
+            --text-primary: #eaecef;
+            --text-secondary: #848e9c;
+            --panel-bg: #2b3139;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0c0e15 0%, #1a1d2b 50%, #0c0e15 100%);
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        
+        /* Header Mobile */
+        .header {
+            background: rgba(30, 34, 45, 0.95);
+            padding: 15px 0;
+            border-bottom: 1px solid #2b3139;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(20px);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--accent-buy), var(--accent-neutral));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .market-info {
+            display: none;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 8px 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, var(--accent-buy), var(--accent-neutral));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1rem;
+        }
+        
+        .user-details {
+            display: none;
+        }
+        
+        .mobile-menu {
+            display: block;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        
+        /* Dashboard Mobile */
+        .dashboard {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .main-panel, .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        /* Cards */
+        .card {
+            background: rgba(30, 34, 45, 0.8);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .card-title i {
+            color: var(--accent-neutral);
+            font-size: 1rem;
+        }
+        
+        /* Tabs Mobile */
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .tab {
+            padding: 8px 12px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+            white-space: nowrap;
+            border-radius: 6px 6px 0 0;
+            font-weight: 500;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+        
+        .tab.active {
+            color: var(--accent-buy);
+            border-bottom-color: var(--accent-buy);
+            background: rgba(0, 192, 118, 0.1);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Charts */
+        .chart-container {
+            height: 250px;
+            margin-top: 10px;
+        }
+        
+        .small-chart {
+            height: 120px;
+        }
+        
+        /* Trading Panel */
+        .trading-panel {
+            background: rgba(43, 49, 57, 0.9);
+            border: 1px solid var(--accent-neutral);
+        }
+        
+        .trading-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .form-group label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .form-control {
+            background: rgba(43, 49, 57, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px 15px;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+        
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .btn {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-buy {
+            background: var(--accent-buy);
+            color: white;
+        }
+        
+        .btn-sell {
+            background: var(--accent-sell);
+            color: white;
+        }
+        
+        .btn-withdraw {
+            background: var(--accent-withdraw);
+            color: white;
+        }
+        
+        /* Portfolio Summary */
+        .portfolio-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .portfolio-item {
+            background: rgba(43, 49, 57, 0.8);
+            padding: 15px 10px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .portfolio-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 5px 0;
+        }
+        
+        .portfolio-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        
+        /* History Tables */
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.8rem;
+        }
+        
+        .history-table th {
+            text-align: left;
+            padding: 12px 8px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.03);
+        }
+        
+        .history-table td {
+            padding: 12px 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .history-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .completed {
+            background: rgba(0, 192, 118, 0.2);
+            color: var(--accent-buy);
+        }
+        
+        .withdrawn {
+            background: rgba(42, 94, 218, 0.2);
+            color: var(--accent-withdraw);
+        }
+        
+        .in-progress {
+            background: rgba(240, 185, 11, 0.2);
+            color: var(--accent-neutral);
+        }
+        
+        .pending {
+            background: rgba(255, 107, 53, 0.2);
+            color: var(--accent-pending);
+        }
+        
+        /* Date Display */
+        .current-date {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin: 15px 0;
+            padding: 12px;
+            background: rgba(43, 49, 57, 0.8);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        /* Notifications */
+        .notifications {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 1000;
+            max-width: calc(100vw - 30px);
+        }
+        
+        .notification {
+            background: var(--accent-buy);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            animation: slideIn 0.4s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            max-width: 100%;
+            border-left: 4px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Bank Selection */
+        .bank-selection {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .bank-option {
+            background: rgba(30, 34, 45, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .bank-option.selected {
+            border-color: var(--accent-withdraw);
+            background: rgba(42, 94, 218, 0.15);
+        }
+        
+        .bank-option.scotiabank.selected {
+            border-color: var(--scotiabank);
+            background: rgba(227, 24, 55, 0.15);
+        }
+        
+        .bank-option.bcp.selected {
+            border-color: var(--bcp);
+            background: rgba(1, 33, 105, 0.15);
+        }
+        
+        /* Active Investments */
+        .active-investments {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .active-investment {
+            background: rgba(43, 49, 57, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid var(--accent-neutral);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .investment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .investment-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+        
+        .investment-amount {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        
+        .investment-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 12px;
+        }
+        
+        .detail-item {
+            text-align: center;
+        }
+        
+        .detail-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        .detail-value {
+            font-weight: 600;
+            margin-top: 5px;
+            font-size: 0.9rem;
+        }
+        
+        /* Performance Metrics */
+        .performance-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .metric-card {
+            background: rgba(43, 49, 57, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .metric-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 8px 0;
+        }
+        
+        .metric-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Investment Types */
+        .investment-types {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        
+        .type-card {
+            background: rgba(43, 49, 57, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .type-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .type-name {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        .type-return {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--accent-buy);
+        }
+        
+        /* Mobile Navigation */
+        .mobile-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(30, 34, 45, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            backdrop-filter: blur(20px);
+            z-index: 90;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.75rem;
+            gap: 4px;
+        }
+        
+        .nav-item.active {
+            color: var(--accent-buy);
+        }
+        
+        .nav-item i {
+            font-size: 1.2rem;
+        }
+        
+        /* Responsive Design - Tablet */
+        @media (min-width: 768px) {
+            .container {
+                padding: 20px;
+                max-width: 1200px;
+            }
+            
+            .dashboard {
+                display: grid;
+                grid-template-columns: 1fr 350px;
+                gap: 20px;
+            }
+            
+            .market-info {
+                display: flex;
+                gap: 20px;
+                font-size: 0.9rem;
+            }
+            
+            .market-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 6px 12px;
+                background: rgba(255, 255, 255, 0.05);
+                border-radius: 8px;
+                min-width: 100px;
+            }
+            
+            .user-details {
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+            }
+            
+            .user-name {
+                font-weight: 600;
+                font-size: 0.9rem;
+            }
+            
+            .user-balance {
+                font-size: 1.1rem;
+                font-weight: 700;
+                color: var(--accent-buy);
+            }
+            
+            .mobile-menu {
+                display: none;
+            }
+            
+            .investment-types {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .bank-selection {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .mobile-nav {
+                display: none;
+            }
+            
+            .performance-metrics {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        /* Responsive Design - Desktop */
+        @media (min-width: 1024px) {
+            .logo h1 {
+                font-size: 1.8rem;
+            }
+            
+            .market-info {
+                gap: 30px;
+            }
+            
+            .user-info {
+                padding: 10px 20px;
+            }
+            
+            .card {
+                padding: 25px;
+            }
+            
+            .chart-container {
+                height: 300px;
+            }
+        }
+        
+        /* Utility Classes */
+        .positive {
+            color: var(--accent-buy);
+        }
+        
+        .negative {
+            color: var(--accent-sell);
+        }
+        
+        .live-badge {
+            background: var(--accent-sell);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* Scroll hide */
+        .scroll-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .scroll-hide::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <button class="mobile-menu">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1>TradeY</h1>
+                </div>
+                <div class="market-info">
+                    <div class="market-item">
+                        <div class="market-label">S&P 500</div>
+                        <div class="market-value positive">4,825.43 <span>+1.2%</span></div>
+                    </div>
+                    <div class="market-item">
+                        <div class="market-label">DOW JONES</div>
+                        <div class="market-value positive">37,895.12 <span>+0.8%</span></div>
+                    </div>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar">Y</div>
+                    <div class="user-details">
+                        <div class="user-name">Yovanny</div>
+                        <div class="user-balance" id="header-balance">S/. 15,430.00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="current-date">
+            <i class="far fa-calendar"></i> 
+            <span id="current-date">28 de Octubre de 2025</span> - 
+            <i class="far fa-clock"></i> 
+            <span id="current-time">14:23:45</span> - 
+            <span class="live-badge"><i class="fas fa-circle"></i> LIVE</span>
+        </div>
+        
+        <!-- Tipos de Inversión -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><i class="fas fa-star"></i> Tipos de Inversión</div>
+            </div>
+            <div class="investment-types">
+                <div class="type-card">
+                    <div class="type-header">
+                        <div class="type-name">Acciones Tech</div>
+                        <div class="type-return">+2.2% mensual</div>
+                    </div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                        Inversión en empresas tecnológicas líderes
+                    </div>
+                </div>
+                <div class="type-card">
+                    <div class="type-header">
+                        <div class="type-name">Forex EUR/USD</div>
+                        <div class="type-return">+3.5% mensual</div>
+                    </div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                        Mercado de divisas Euro/Dólar
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="dashboard">
+            <div class="main-panel">
+                <!-- Portfolio Principal -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title"><i class="fas fa-chart-line"></i> Mi Portafolio</div>
+                        <div class="live-badge">ACTUALIZADO</div>
+                    </div>
+                    
+                    <div class="performance-metrics">
+                        <div class="metric-card">
+                            <div class="metric-label">Valor Total</div>
+                            <div class="metric-value">S/. 25,680</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Ganancias Hoy</div>
+                            <div class="metric-value positive">+S/. 380</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Rendimiento</div>
+                            <div class="metric-value positive">+9.2%</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Inversiones</div>
+                            <div class="metric-value">6 Activas</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tabs scroll-hide">
+                        <button class="tab active" data-tab="active">En Curso</button>
+                        <button class="tab" data-tab="pending">Pendientes</button>
+                        <button class="tab" data-tab="investments">Completadas</button>
+                        <button class="tab" data-tab="withdrawals">Retiros</button>
+                        <button class="tab" data-tab="all">Todo</button>
+                    </div>
+                    
+                    <!-- Contenido de Tabs -->
+                    <div class="tab-content active" id="active-content">
+                        <div class="active-investments" id="active-investments">
+                            <!-- Se carga con JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="pending-content">
+                        <div class="active-investments" id="pending-investments">
+                            <!-- Se carga con JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="investments-content">
+                        <div class="scroll-hide" style="overflow-x: auto;">
+                            <table class="history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Activo</th>
+                                        <th>Inversión</th>
+                                        <th>Ganancia</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="investments-body">
+                                    <!-- Se carga con JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="withdrawals-content">
+                        <div class="scroll-hide" style="overflow-x: auto;">
+                            <table class="history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Banco</th>
+                                        <th>Monto</th>
+                                        <th>Cuenta</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="withdrawals-body">
+                                    <!-- Se carga con JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="all-content">
+                        <div class="scroll-hide" style="overflow-x: auto;">
+                            <table class="history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Tipo</th>
+                                        <th>Descripción</th>
+                                        <th>Monto</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="all-history-body">
+                                    <!-- Se carga con JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gráfico de Rendimiento -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title"><i class="fas fa-chart-bar"></i> Rendimiento</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar">
+                <!-- Panel de Inversión -->
+                <div class="card trading-panel">
+                    <div class="card-header">
+                        <div class="card-title"><i class="fas fa-plus-circle"></i> Nueva Inversión</div>
+                    </div>
+                    <div class="trading-form">
+                        <div class="form-group">
+                            <label for="investmentAmount">Monto (S/.)</label>
+                            <input type="number" id="investmentAmount" class="form-control" value="5000" min="1000" step="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="investmentType">Tipo</label>
+                            <select id="investmentType" class="form-control">
+                                <option value="stocks">Acciones Tech</option>
+                                <option value="crypto">Criptomonedas</option>
+                                <option value="forex">Forex</option>
+                                <option value="realestate">Bienes Raíces</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="duration">Duración</label>
+                            <select id="duration" class="form-control">
+                                <option value="1">1 Mes</option>
+                                <option value="2">2 Meses</option>
+                                <option value="3" selected>3 Meses</option>
+                                <option value="6">6 Meses</option>
+                            </select>
+                        </div>
+                        <div class="portfolio-summary">
+                            <div class="portfolio-item">
+                                <div class="portfolio-label">Inversión</div>
+                                <div class="portfolio-value" id="summary-investment">S/. 5,000</div>
+                            </div>
+                            <div class="portfolio-item">
+                                <div class="portfolio-label">Ganancia Mensual</div>
+                                <div class="portfolio-value positive" id="summary-monthly">S/. 110</div>
+                            </div>
+                            <div class="portfolio-item">
+                                <div class="portfolio-label">Total Final</div>
+                                <div class="portfolio-value" id="summary-total">S/. 5,330</div>
+                            </div>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-buy" id="buyBtn"><i class="fas fa-check"></i> INVERTIR</button>
+                            <button class="btn btn-sell" id="sellBtn"><i class="fas fa-times"></i> CANCELAR</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Panel de Retiro -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title"><i class="fas fa-wallet"></i> Retirar Fondos</div>
+                    </div>
+                    <div class="trading-form">
+                        <div class="balance-info" style="display: flex; justify-content: space-between; margin-bottom: 15px; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                            <span>Saldo disponible:</span>
+                            <span class="positive" id="withdraw-balance">S/. 8,250.00</span>
+                        </div>
+                        
+                        <div class="bank-selection">
+                            <div class="bank-option scotiabank" data-bank="scotiabank">
+                                <div class="bank-name">Scotiabank</div>
+                                <div class="bank-account">Cuenta Ahorros ****7890</div>
+                            </div>
+                            <div class="bank-option bcp" data-bank="bcp">
+                                <div class="bank-name">BCP</div>
+                                <div class="bank-account">Cuenta Sueldo ****1234</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <input type="number" class="form-control" placeholder="Monto a retirar" id="withdrawAmount" min="100" max="8250">
+                        </div>
+                        <button class="btn btn-withdraw" id="withdrawBtn"><i class="fas fa-paper-plane"></i> SOLICITAR RETIRO</button>
+                    </div>
+                </div>
+                
+                <!-- Gráfico de Portafolio -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title"><i class="fas fa-chart-pie"></i> Distribución</div>
+                    </div>
+                    <div class="chart-container small-chart">
+                        <canvas id="portfolioChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navegación Móvil -->
+    <div class="mobile-nav">
+        <a href="#" class="nav-item active">
+            <i class="fas fa-home"></i>
+            <span>Inicio</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-chart-line"></i>
+            <span>Mercado</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-wallet"></i>
+            <span>Billetera</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-user"></i>
+            <span>Perfil</span>
+        </a>
+    </div>
+
+    <div class="notifications" id="notifications"></div>
+
+    <script>
+        // ========== DATOS COMPLETOS ==========
+        let userBalance = 8250.00;
+        let selectedBank = null;
+        let investmentIdCounter = 10;
+        let withdrawalIdCounter = 5;
+
+        // Historial de inversiones de Yovanny
+        const investmentHistory = [
+            { id: 1, date: '15/08/2025', asset: 'Tech Stocks', amount: 2500, profit: 375, status: 'Completado', type: 'investment' },
+            { id: 2, date: '22/06/2025', asset: 'Crypto Portfolio', amount: 1800, profit: 270, status: 'Completado', type: 'investment' },
+            { id: 3, date: '10/04/2025', asset: 'Forex EUR/USD', amount: 3000, profit: 450, status: 'Completado', type: 'investment' },
+            { id: 4, date: '05/02/2025', asset: 'Commodities', amount: 1500, profit: 225, status: 'Completado', type: 'investment' },
+            { id: 5, date: '18/12/2024', asset: 'Tech Stocks', amount: 2200, profit: 330, status: 'Completado', type: 'investment' }
+        ];
+
+        // Inversiones activas
+        const activeInvestments = [
+            { 
+                id: 6, 
+                asset: 'Tech Stocks', 
+                amount: 5000, 
+                startDate: '28/07/2025', 
+                endDate: '28/10/2025', 
+                duration: 3,
+                currentMonth: 3,
+                monthlyProfit: 110,
+                totalProfit: 330,
+                status: 'En Curso',
+                progress: 100
+            },
+            { 
+                id: 7, 
+                asset: 'Crypto Portfolio', 
+                amount: 3500, 
+                startDate: '15/09/2025', 
+                endDate: '15/12/2025', 
+                duration: 3,
+                currentMonth: 2,
+                monthlyProfit: 77,
+                totalProfit: 154,
+                status: 'En Curso',
+                progress: 66
+            }
+        ];
+
+        // Inversiones pendientes
+        const pendingInvestments = [
+            { 
+                id: 8, 
+                asset: 'Real Estate Fund', 
+                amount: 6000, 
+                startDate: '01/11/2025', 
+                endDate: '01/05/2026', 
+                duration: 6,
+                currentMonth: 0,
+                monthlyProfit: 132,
+                totalProfit: 0,
+                status: 'Pendiente',
+                progress: 0
+            }
+        ];
+
+        // Historial de retiros
+        const withdrawalHistory = [
+            { id: 1, date: '20/10/2025', bank: 'Scotiabank', amount: 2000, account: 'Cuenta Ahorros ****7890', status: 'Completado', type: 'withdrawal' },
+            { id: 2, date: '15/09/2025', bank: 'BCP', amount: 1500, account: 'Cuenta Sueldo ****1234', status: 'Completado', type: 'withdrawal' },
+            { id: 3, date: '05/08/2025', bank: 'Scotiabank', amount: 3000, account: 'Cuenta Ahorros ****7890', status: 'Completado', type: 'withdrawal' },
+            { id: 4, date: '20/07/2025', bank: 'BCP', amount: 1200, account: 'Cuenta Sueldo ****1234', status: 'Completado', type: 'withdrawal' }
+        ];
+
+        // ========== FUNCIONES DE CÁLCULO ==========
+        function calculateInvestmentReturns() {
+            const amount = parseFloat(document.getElementById('investmentAmount').value) || 5000;
+            const investmentType = document.getElementById('investmentType').value;
+            const months = parseInt(document.getElementById('duration').value) || 3;
+            
+            // Diferentes tasas por tipo de inversión
+            const rates = {
+                'stocks': 0.022,      // 2.2%
+                'crypto': 0.048,      // 4.8%
+                'forex': 0.035,       // 3.5%
+                'realestate': 0.018   // 1.8%
+            };
+            
+            const monthlyRate = rates[investmentType] || 0.022;
+            const monthlyProfit = amount * monthlyRate;
+            const totalProfit = monthlyProfit * months;
+            const finalAmount = amount + totalProfit;
+            
+            document.getElementById('summary-investment').textContent = `S/. ${amount.toLocaleString('es-PE')}`;
+            document.getElementById('summary-monthly').textContent = `S/. ${monthlyProfit.toFixed(2)}`;
+            document.getElementById('summary-total').textContent = `S/. ${finalAmount.toLocaleString('es-PE')}`;
+            
+            return { amount, monthlyProfit, totalProfit, finalAmount, investmentType };
+        }
+
+        // ========== FUNCIONES DE CARGA DE DATOS ==========
+        function loadActiveInvestments() {
+            const container = document.getElementById('active-investments');
+            container.innerHTML = activeInvestments.map(inv => `
+                <div class="active-investment">
+                    <div class="investment-header">
+                        <div class="investment-name">${inv.asset}</div>
+                        <div class="investment-amount">S/. ${inv.amount.toLocaleString('es-PE')}</div>
+                    </div>
+                    <div class="investment-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Inicio</div>
+                            <div class="detail-value">${inv.startDate}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Fin</div>
+                            <div class="detail-value">${inv.endDate}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Progreso</div>
+                            <div class="detail-value">${inv.progress}%</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Ganancia</div>
+                            <div class="detail-value positive">S/. ${inv.totalProfit.toFixed(2)}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadPendingInvestments() {
+            const container = document.getElementById('pending-investments');
+            container.innerHTML = pendingInvestments.map(inv => `
+                <div class="active-investment">
+                    <div class="investment-header">
+                        <div class="investment-name">${inv.asset}</div>
+                        <div class="investment-amount">S/. ${inv.amount.toLocaleString('es-PE')}</div>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <span class="status-badge pending">Programado para ${inv.startDate}</span>
+                    </div>
+                    <div class="investment-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Inicio</div>
+                            <div class="detail-value">${inv.startDate}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Duración</div>
+                            <div class="detail-value">${inv.duration} meses</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Ganancia Mensual</div>
+                            <div class="detail-value positive">S/. ${inv.monthlyProfit.toFixed(2)}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Estado</div>
+                            <div class="detail-value">Pendiente</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadInvestmentsHistory() {
+            const container = document.getElementById('investments-body');
+            container.innerHTML = investmentHistory.map(inv => `
+                <tr>
+                    <td>${inv.date}</td>
+                    <td>${inv.asset}</td>
+                    <td>S/. ${inv.amount.toLocaleString('es-PE')}</td>
+                    <td class="positive">S/. ${inv.profit.toLocaleString('es-PE')}</td>
+                    <td><span class="status-badge completed">${inv.status}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        function loadWithdrawalsHistory() {
+            const container = document.getElementById('withdrawals-body');
+            container.innerHTML = withdrawalHistory.map(wd => `
+                <tr>
+                    <td>${wd.date}</td>
+                    <td>${wd.bank}</td>
+                    <td class="positive">S/. ${wd.amount.toLocaleString('es-PE')}</td>
+                    <td>${wd.account}</td>
+                    <td><span class="status-badge withdrawn">${wd.status}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        function loadAllHistory() {
+            const container = document.getElementById('all-history-body');
+            const allHistory = [
+                ...activeInvestments.map(inv => ({ ...inv, type: 'active', date: inv.startDate })),
+                ...pendingInvestments.map(inv => ({ ...inv, type: 'pending', date: inv.startDate })),
+                ...investmentHistory,
+                ...withdrawalHistory
+            ].sort((a, b) => new Date(b.date.split('/').reverse().join('-')) - new Date(a.date.split('/').reverse().join('-')));
+            
+            container.innerHTML = allHistory.map(item => {
+                if (item.type === 'active') {
+                    return `
+                        <tr>
+                            <td>${item.date}</td>
+                            <td><span class="status-badge in-progress">EN CURSO</span></td>
+                            <td>${item.asset} - Mes ${item.currentMonth}/${item.duration}</td>
+                            <td class="positive">S/. ${item.amount.toLocaleString('es-PE')}</td>
+                            <td><span class="status-badge in-progress">${item.status}</span></td>
+                        </tr>
+                    `;
+                } else if (item.type === 'pending') {
+                    return `
+                        <tr>
+                            <td>${item.date}</td>
+                            <td><span class="status-badge pending">PENDIENTE</span></td>
+                            <td>${item.asset} - Inicia ${item.startDate}</td>
+                            <td class="positive">S/. ${item.amount.toLocaleString('es-PE')}</td>
+                            <td><span class="status-badge pending">${item.status}</span></td>
+                        </tr>
+                    `;
+                } else if (item.type === 'investment') {
+                    return `
+                        <tr>
+                            <td>${item.date}</td>
+                            <td><span class="status-badge completed">COMPLETADA</span></td>
+                            <td>${item.asset} - Ganancia: S/. ${item.profit}</td>
+                            <td class="positive">S/. ${item.amount.toLocaleString('es-PE')}</td>
+                            <td><span class="status-badge completed">${item.status}</span></td>
+                        </tr>
+                    `;
+                } else {
+                    return `
+                        <tr>
+                            <td>${item.date}</td>
+                            <td><span class="status-badge withdrawn">RETIRO</span></td>
+                            <td>${item.bank} - ${item.account}</td>
+                            <td class="positive">S/. ${item.amount.toLocaleString('es-PE')}</td>
+                            <td><span class="status-badge withdrawn">${item.status}</span></td>
+                        </tr>
+                    `;
+                }
+            }).join('');
+        }
+
+        // ========== FUNCIONES DE INTERFAZ ==========
+        function updateBalanceDisplay() {
+            document.getElementById('header-balance').textContent = `S/. ${userBalance.toLocaleString('es-PE', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('withdraw-balance').textContent = `S/. ${userBalance.toLocaleString('es-PE', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('withdrawAmount').max = userBalance;
+        }
+
+        function showNotification(message, type = 'info') {
+            const notifications = document.getElementById('notifications');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            
+            let icon = 'fas fa-info-circle';
+            if (type === 'withdraw') icon = 'fas fa-paper-plane';
+            if (type === 'error') icon = 'fas fa-exclamation-triangle';
+            
+            notification.innerHTML = `<i class="${icon}"></i><span>${message}</span>`;
+            notifications.appendChild(notification);
+            
+            setTimeout(() => notification.remove(), 5000);
+        }
+
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('current-time').textContent = now.toLocaleTimeString('es-PE');
+        }
+
+        // ========== INICIALIZACIÓN ==========
+        function initCharts() {
+            // Gráfico de rendimiento
+            const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+            new Chart(performanceCtx, {
+                type: 'line',
+                data: {
+                    labels: ['25/07', '01/08', '08/08', '15/08', '22/08', '29/08', '05/09', '12/09', '19/09', '26/09', '03/10', '10/10', '17/10', '24/10', '28/10'],
+                    datasets: [{
+                        label: 'Valor de la Inversión',
+                        data: [5000, 5050, 5100, 5110, 5150, 5200, 5220, 5250, 5270, 5290, 5300, 5310, 5320, 5325, 5330],
+                        borderColor: '#00c076',
+                        backgroundColor: 'rgba(0, 192, 118, 0.1)',
+                        borderWidth: 2,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // Gráfico de portafolio
+            const portfolioCtx = document.getElementById('portfolioChart').getContext('2d');
+            new Chart(portfolioCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Tech Stocks', 'Crypto', 'Forex', 'Real Estate'],
+                    datasets: [{
+                        data: [45, 25, 20, 10],
+                        backgroundColor: ['#00c076', '#f0b90b', '#f84960', '#2a5ada'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar todo
+            initCharts();
+            loadActiveInvestments();
+            loadPendingInvestments();
+            loadInvestmentsHistory();
+            loadWithdrawalsHistory();
+            loadAllHistory();
+            updateBalanceDisplay();
+            calculateInvestmentReturns();
+            updateTime();
+            
+            // Actualizar hora cada segundo
+            setInterval(updateTime, 1000);
+            
+            // Configurar tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                    document.getElementById(this.dataset.tab + '-content').classList.add('active');
+                });
+            });
+            
+            // Configurar bancos
+            document.querySelectorAll('.bank-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.bank-option').forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedBank = this.getAttribute('data-bank');
+                });
+            });
+            
+            // Cálculo en tiempo real
+            document.getElementById('investmentAmount').addEventListener('input', calculateInvestmentReturns);
+            document.getElementById('investmentType').addEventListener('change', calculateInvestmentReturns);
+            document.getElementById('duration').addEventListener('change', calculateInvestmentReturns);
+            
+            // Botón de inversión
+            document.getElementById('buyBtn').addEventListener('click', function() {
+                const calculation = calculateInvestmentReturns();
+                const amount = calculation.amount;
+                
+                if (amount > userBalance) {
+                    showNotification('Saldo insuficiente', 'error');
+                    return;
+                }
+                
+                if (amount < 1000) {
+                    showNotification('Mínimo S/. 1,000', 'error');
+                    return;
+                }
+                
+                // Crear nueva inversión
+                const newInvestment = {
+                    id: investmentIdCounter++,
+                    asset: document.getElementById('investmentType').options[document.getElementById('investmentType').selectedIndex].text,
+                    amount: amount,
+                    startDate: '28/10/2025',
+                    endDate: '28/01/2026',
+                    duration: 3,
+                    currentMonth: 1,
+                    monthlyProfit: calculation.monthlyProfit,
+                    totalProfit: calculation.monthlyProfit,
+                    status: 'En Curso',
+                    progress: 33
+                };
+                
+                activeInvestments.push(newInvestment);
+                userBalance -= amount;
+                updateBalanceDisplay();
+                
+                showNotification(`Inversión de S/. ${amount.toLocaleString('es-PE')} ejecutada`);
+                loadActiveInvestments();
+                loadAllHistory();
+                
+                document.getElementById('investmentAmount').value = '';
+                calculateInvestmentReturns();
+            });
+            
+            // Botón de retiro
+            document.getElementById('withdrawBtn').addEventListener('click', function() {
+                const amount = parseFloat(document.getElementById('withdrawAmount').value);
+                
+                if (!selectedBank) {
+                    showNotification('Selecciona un banco', 'error');
+                    return;
+                }
+                
+                if (!amount || amount <= 0) {
+                    showNotification('Ingresa un monto válido', 'error');
+                    return;
+                }
+                
+                if (amount > userBalance) {
+                    showNotification('Saldo insuficiente', 'error');
+                    return;
+                }
+                
+                if (amount < 100) {
+                    showNotification('Mínimo S/. 100', 'error');
+                    return;
+                }
+                
+                const bankName = selectedBank === 'scotiabank' ? 'Scotiabank' : 'BCP';
+                const account = selectedBank === 'scotiabank' ? 'Cuenta Ahorros ****7890' : 'Cuenta Sueldo ****1234';
+                
+                const newWithdrawal = {
+                    id: withdrawalIdCounter++,
+                    date: '28/10/2025',
+                    bank: bankName,
+                    amount: amount,
+                    account: account,
+                    status: 'Pendiente',
+                    type: 'withdrawal'
+                };
+                
+                withdrawalHistory.unshift(newWithdrawal);
+                userBalance -= amount;
+                updateBalanceDisplay();
+                
+                showNotification(`Retiro de S/. ${amount.toLocaleString('es-PE')} solicitado`, 'withdraw');
+                loadWithdrawalsHistory();
+                loadAllHistory();
+                
+                document.getElementById('withdrawAmount').value = '';
+                document.querySelectorAll('.bank-option').forEach(opt => opt.classList.remove('selected'));
+                selectedBank = null;
+            });
+            
+            // Notificación de bienvenida
+            setTimeout(() => {
+                showNotification('¡Bienvenido Yovanny! Plataforma actualizada al 28/10/2025');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
